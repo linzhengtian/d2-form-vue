@@ -1,0 +1,42 @@
+services:
+    app:
+      build:
+        context: ./
+        dockerfile: Dockerfile
+      container_name: app
+      environment:
+        MYSQL_HOST: localhost
+        MYSQL_PORT: 3306
+        MYSQL_DATABASE: d2form
+        # 对应mysql8/init目录下的初始化语句
+        MYSQL_USER: root
+        MYSQL_PASSWORD: admin
+      tty: true
+      # 等待MYSQL_HOST:MYSQL_PORT端口启用完毕后，启动程序
+      command: >
+        /bin/bash -c "sh /wait-for-it.sh -t 0 localhost:3306 && sh /home/d2Form/restart.sh && sh -c tail -f /dev/null"
+      network_mode: host
+      depends_on:
+        - mysql8
+      volumes:
+        # 静态文件路径
+        - ./media:/home/d2Form/media
+    mysql8:
+      image: mysql:8.0.34
+      container_name: mysql8
+      restart: always
+      command:
+        --default-authentication-plugin=mysql_native_password
+        --character-set-server=utf8mb4
+        --collation-server=utf8mb4_general_ci
+      environment:
+        MYSQL_ROOT_PASSWORD: admin
+        TZ: Asia/Shanghai
+        # 初始化建库
+        MYSQL_DATABASE: d2form
+      volumes:
+        # 数据路径
+        - ./mysql8/datadir:/var/lib/mysql
+        # 数据库初始化语句
+        - ./mysql8/init:/docker-entrypoint-initdb.d
+      network_mode: host

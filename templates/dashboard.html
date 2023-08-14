@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'jquery-confirm/dist/jquery-confirm.min.css' %}">
+    <style>
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>新页面</h3>
+                    <p>&nbsp</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-server"></i>
+                </div>
+                <a href="/" class="small-box-footer">前往 <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <!-- ChartJS -->
+    <script src="{% static 'jquery-confirm/dist/jquery-confirm.min.js' %}"></script>
+    <script>
+        // 将数据JSON化
+        (function ($) {
+            $.fn.serializeJson = function () {
+                let serializeObj = {};
+                let array = this.serializeArray();
+                $(array).each(function () {
+                    if (serializeObj[this.name]) {
+                        if ($.isArray(serializeObj[this.name])) {
+                            serializeObj[this.name].push(this.value);
+                        } else {
+                            serializeObj[this.name] = [serializeObj[this.name], this.value];
+                        }
+                    } else {
+                        serializeObj[this.name] = this.value;
+                    }
+                });
+                return serializeObj;
+            };
+        })(jQuery);
+    </script>
+{% endblock %}
